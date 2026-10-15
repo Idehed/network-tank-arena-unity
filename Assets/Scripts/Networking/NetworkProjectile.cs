@@ -12,6 +12,7 @@ namespace NetworkTankArena.Networking
     {
         private Projectile projectile;
         private NetworkTankController shooter;
+        [SerializeField] private GameObject explosionVFX;
 
         private void Awake()
         {
@@ -78,12 +79,18 @@ namespace NetworkTankArena.Networking
             try
             {
                 projectile.Simulate(Time.fixedDeltaTime);
+                
             }
             finally
             {
                 // Damage callbacks cannot leave a terminal network projectile alive.
                 if (projectile.IsTerminal)
+                {
+                    print("siiiii");
+                    // Inform clients to play explosion VFX at this position, then despawn on server.
+                    PlayExplosionClientRpc(transform.position);
                     DespawnFromServer();
+                }
             }
         }
 
@@ -98,6 +105,13 @@ namespace NetworkTankArena.Networking
             if (shooter != null)
                 shooter.UnregisterProjectile(this);
             shooter = null;
+        }
+
+        [ClientRpc]
+        private void PlayExplosionClientRpc(Vector3 position)
+        {
+            if (explosionVFX != null)
+                Instantiate(explosionVFX, position, Quaternion.identity);
         }
     }
 }

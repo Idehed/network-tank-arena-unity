@@ -1,3 +1,5 @@
+using System.Globalization;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace NetworkTankArena.Combat
@@ -9,6 +11,7 @@ namespace NetworkTankArena.Combat
         private bool externallyDriven;
         private int creationFrame;
         private GameObject source;
+        [SerializeField] private GameObject explosionVFX;
         private Transform owner;
         private float speed;
         private float radius;
@@ -84,10 +87,13 @@ namespace NetworkTankArena.Combat
                 IsTerminal = true;
                 try
                 {
-                    ProjectileCollision.DeliverDamage(hit.Collider, damage, source);
+                   ProjectileCollision.DeliverDamage(hit.Collider, damage, source);
+                   GameObject boom = Instantiate(explosionVFX, Position, Quaternion.LookRotation(Direction, Vector3.up));
+                   Destroy(boom, 1f);
                 }
                 finally
                 {
+                    
                     Remove();
                 }
                 return;
@@ -108,6 +114,7 @@ namespace NetworkTankArena.Combat
             // EditMode tests retain the terminal instance for assertions and destroy it in teardown.
             if (!externallyDriven && Application.isPlaying)
                 Destroy(gameObject);
+            
         }
     }
 }

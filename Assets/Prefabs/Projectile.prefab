@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b76588460bce78544acbd6aa128e11a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: NetworkTankArena.Runtime::NetworkTankArena.Combat.Projectile
+  explosionVFX: {fileID: 1411588298947990, guid: 22429e62552901f4d94bca4295a9886a, type: 3}
 --- !u!1 &9009658233053964358
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +112,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c2e40fa84d53ccd428f640eac126b1fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
