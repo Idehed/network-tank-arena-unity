@@ -86,7 +86,6 @@ namespace NetworkTankArena.Networking
                 // Damage callbacks cannot leave a terminal network projectile alive.
                 if (projectile.IsTerminal)
                 {
-                    print("siiiii");
                     // Inform clients to play explosion VFX at this position, then despawn on server.
                     PlayExplosionClientRpc(transform.position);
                     DespawnFromServer();
@@ -110,8 +109,11 @@ namespace NetworkTankArena.Networking
         [ClientRpc]
         private void PlayExplosionClientRpc(Vector3 position)
         {
-            if (explosionVFX != null)
-                Instantiate(explosionVFX, position, Quaternion.identity);
+            if (explosionVFX == null)
+                return;
+
+              GameObject boom = Instantiate(explosionVFX, position, Quaternion.identity);
+            Destroy(boom, 2f);
         }
     }
 }
