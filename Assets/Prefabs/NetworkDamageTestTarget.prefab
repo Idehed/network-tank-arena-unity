@@ -154,3 +154,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: NetworkTankArena.Runtime::NetworkTankArena.Networking.NetworkDamageTestTarget
   ShowTopMostFoldoutHeaderGroup: 1
+  health:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  maxHealth:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 100

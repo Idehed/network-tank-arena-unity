@@ -9,21 +9,14 @@ namespace NetworkTankArena.Networking
     [RequireComponent(typeof(NetworkObject))]
     public sealed class NetworkDamageTestTarget : NetworkBehaviour, IDamageable
     {
-        private readonly NetworkVariable<int> hitCount = new NetworkVariable<int>(0,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private readonly NetworkVariable<int> accumulatedDamage = new NetworkVariable<int>(0,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private readonly NetworkVariable<int> health = new NetworkVariable<int>(0,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private readonly NetworkVariable<int> maxHealth = new NetworkVariable<int>(100,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        public int HitCount => hitCount.Value;
-        public int AccumulatedDamage => accumulatedDamage.Value;
+        public NetworkVariable<int> health = new NetworkVariable<int>(0,
+            NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
+        public NetworkVariable<int> maxHealth = new NetworkVariable<int>(100,
+            NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
 
         public int Health => health.Value;
 
-        
+
         public int MaxHealth => maxHealth.Value;
 
         public override void OnNetworkSpawn()
@@ -41,28 +34,35 @@ namespace NetworkTankArena.Networking
             {
                 return;
             }
-                
+
 
             // Keep the teaching counters nonnegative even in a very long-running session.
-            hitCount.Value = (int)System.Math.Min(int.MaxValue, (long)hitCount.Value + 1);
-            accumulatedDamage.Value = (int)System.Math.Min(int.MaxValue, (long)accumulatedDamage.Value + amount);
             health.Value = (int)System.Math.Max(0, (long)health.Value - amount);
 
-            if(health.Value == 0)
+            if (health.Value == 0)
             {
                 Debug.Log("died");
                 NetworkObject.Despawn(true); // Server owns the target; clients will see it disappear.
             }
         }
 
+        public void Heal(int amount)
+        {
+            if (!IsSpawned || !IsServer || amount <= 0 || health.Value <= 0)
+                return;
+
+            health.Value = Mathf.Min(maxHealth.Value, health.Value + amount);
+        }
+
         private void OnGUI()
         {
-            if (!IsSpawned || !IsClient)
+            if (!IsSpawned || !IsClient || !IsOwner)
                 return;
 
             // Read current state, including the initial late-join value; no hit-event replay is needed.
-            GUI.Box(new Rect(12f, 170f, 300f, 50f),
-                $"Damage test target\nHits: {HitCount}   Damage: {AccumulatedDamage}\nHealth: {Health}/{MaxHealth}");
+            GUI.color = Color.red;
+            Rect rect = new Rect(12f, 120f, 300f, 50f);
+            GUI.Box(rect, $"Health: {Health}/{MaxHealth}");
         }
     }
 }

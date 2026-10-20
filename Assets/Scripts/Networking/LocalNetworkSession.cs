@@ -17,8 +17,8 @@ namespace NetworkTankArena.Networking
         [SerializeField] private TankFollowCamera followCamera;
         [SerializeField] private Transform hostSpawn;
         [SerializeField] private Transform clientSpawn;
-        [SerializeField] private NetworkDamageTestTarget damageTargetPrefab;
-        [SerializeField] private Transform damageTargetSpawn;
+        [SerializeField] public NetworkHealthKit healthTargetPrefab;
+        [SerializeField] public Transform healthTargetSpawn;
         [SerializeField] private ushort port = 7777;
 
         private readonly Dictionary<ulong, int> spawnSlots = new Dictionary<ulong, int>();
@@ -78,10 +78,10 @@ namespace NetworkTankArena.Networking
                 !(networkManager.NetworkConfig.NetworkTransport is UnityTransport transport) ||
                 networkManager.NetworkConfig.PlayerPrefab == null ||
                 networkManager.NetworkConfig.PlayerPrefab.GetComponent<NetworkTankController>() == null ||
-                damageTargetPrefab == null || !damageTargetPrefab.enabled || !damageTargetPrefab.gameObject.activeSelf ||
-                !damageTargetPrefab.TryGetComponent(out NetworkObject _) || damageTargetSpawn == null ||
-                !TankMath.IsFinite(damageTargetSpawn.position) || !TankMath.IsFinite(damageTargetSpawn.eulerAngles.y) ||
-                !networkManager.NetworkConfig.Prefabs.Contains(damageTargetPrefab.gameObject) ||
+                healthTargetPrefab == null || !healthTargetPrefab.enabled || !healthTargetPrefab.gameObject.activeSelf ||
+                !healthTargetPrefab.TryGetComponent(out NetworkObject _) || healthTargetSpawn == null ||
+                !TankMath.IsFinite(healthTargetSpawn.position) || !TankMath.IsFinite(healthTargetSpawn.eulerAngles.y) ||
+                !networkManager.NetworkConfig.Prefabs.Contains(healthTargetPrefab.gameObject) ||
                 !networkManager.NetworkConfig.PlayerPrefab.TryGetComponent(out NetworkTransform rootTransform) ||
                 rootTransform.AuthorityMode != NetworkTransform.AuthorityModes.Server)
             {
@@ -102,8 +102,8 @@ namespace NetworkTankArena.Networking
             {
                 // Exactly one server-owned target per new Host session. Clients receive this spawn
                 // and its current NetworkVariables, including on a later connection.
-                NetworkDamageTestTarget target = Instantiate(damageTargetPrefab, damageTargetSpawn.position,
-                    Quaternion.Euler(0f, damageTargetSpawn.eulerAngles.y, 0f));
+                NetworkHealthKit target = Instantiate(healthTargetPrefab, healthTargetSpawn.position,
+                    Quaternion.Euler(0f, healthTargetSpawn.eulerAngles.y, 0f));
                 target.NetworkObject.Spawn();
             }
             status = started ? (host ? $"Hosting on localhost:{port}." : "Connecting to localhost...") : "Session could not start.";
