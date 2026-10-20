@@ -10,45 +10,28 @@ namespace NetworkTankArena.Networking
     [RequireComponent(typeof(NetworkObject))]
     public sealed class NetworkHealthKit : NetworkBehaviour
     {
-
         public int healthamount = 25;
         public bool isUsed = false;
 
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
             
-            if (!IsSpawned || !IsServer)
+            if (!IsSpawned || !IsServer || isUsed)
                 return;
-            if (collision.gameObject.CompareTag("Player"))
+
+            var target = other.gameObject.GetComponent<NetworkDamageTestTarget>();
+            if(target == null)
             {
-                var target = collision.gameObject.GetComponent<NetworkDamageTestTarget>();
-                if(target == null)
-                {
-                    return;
-                }
-
-                target.Heal(healthamount);
-                isUsed = true;
-
-                Debug.Log("Health kit used up, " + healthamount + " health restored.");
-                NetworkObject.Despawn(true);
-                
-                StartCoroutine(RespawnKit());
-
-
+                return;
             }
 
+            target.Heal(healthamount);
+            isUsed = true;
+            
 
-        }
-
-        IEnumerator RespawnKit()
-        {
-            var local = gameObject.GetComponent<LocalNetworkSession>();
-            // Server owns the target; clients will see it disappear.
-            yield return new WaitForSeconds(3.0f);
-            Instantiate(local.healthTargetPrefab, local.healthTargetSpawn.position, Quaternion.Euler(0f, local.healthTargetSpawn.eulerAngles.y, 0f));
-            NetworkObject.Spawn(true);
-        }
+            Debug.Log("Health kit used up, " + healthamount + " health restored.");
+            NetworkObject.Despawn(true);
+        }  
     }
 }
