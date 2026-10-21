@@ -30,7 +30,7 @@ namespace NetworkTankArena.Networking
             isUsed = true;
             
 
-            Debug.Log("Health kit used up, " + healthamount + " health restored.");
+            Debug.Log("Health kit used up, " + healthamount + " health restored for " + target.name + ".");
             NetworkObject.Despawn(true);
         }  
     }

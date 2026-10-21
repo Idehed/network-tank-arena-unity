@@ -1,3 +1,47 @@
+# Network Tank Arena Anton Idehed
+
+## Project summary
+
+You play as a tank and you are to survive as long as you can. You play vs another player that can damage you, but you do have some healthkits laying around that you can pick up and it will give you 25 health.
+
+
+## How to run/test the project
+
+You start the game with one pressing Start Host and the other one (or you again) pressing Start Client. You use WASD to move around and then you use the mouse to look around. You will shoot with the left mouse button. 
+
+
+
+
+
+
+
+--
+--
+--
+-
+
+
+--
+-
+
+
+
+
+-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Network Tank Arena
 
 A two-player authoritative movement and combat starter for the Network Programming course.
