@@ -1,4 +1,6 @@
 using NetworkTankArena.Tanks;
+using System;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace NetworkTankArena.Combat
@@ -8,6 +10,7 @@ namespace NetworkTankArena.Combat
     {
         [SerializeField] private TankSimulation tank;
         [SerializeField] private Projectile projectilePrefab;
+        [SerializeField] private GameObject muzzleVFX;
         [SerializeField, Min(0.01f)] private float cooldownSeconds = 0.30f;
         [SerializeField, Min(0f)] private float muzzleForwardOffset = 1.30f;
         [SerializeField, Min(0.01f)] private float projectileSpeed = 20f;
@@ -20,6 +23,7 @@ namespace NetworkTankArena.Combat
 
         public TankSimulation Tank => tank;
         internal Projectile ProjectilePrefab => projectilePrefab;
+        internal GameObject MuzzleVFX => muzzleVFX;
 
         private void Awake()
         {
@@ -75,6 +79,10 @@ namespace NetworkTankArena.Combat
             }
 
             Projectile projectile = Instantiate(projectilePrefab, pose.Origin, Quaternion.LookRotation(pose.Forward));
+            GameObject muzzle = Instantiate(muzzleVFX, pose.Origin, Quaternion.LookRotation(pose.Forward));
+            Destroy(muzzle, 2f);
+
+
             if (!projectile.Initialize(pose, tank.gameObject, projectileSpeed, projectileRadius,
                 projectileLifetime, damage, hitMask))
             {
@@ -98,4 +106,7 @@ namespace NetworkTankArena.Combat
             CombatValidation.IsFinite(tank.TurretOrigin) && CombatValidation.IsFinite(tank.TurretYaw) &&
             CombatValidation.IsValidShot(projectileSpeed, projectileRadius, projectileLifetime, damage, hitMask);
     }
+
+
+
 }
