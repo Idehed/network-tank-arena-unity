@@ -13,24 +13,25 @@ namespace NetworkTankArena.Networking
         public int healthamount = 25;
         public bool isUsed = false;
 
+       
+
 
         private void OnTriggerEnter(Collider other)
         {
             
-            if (!IsSpawned || !IsServer || isUsed)
-                return;
+            if (!IsSpawned || !IsServer) return;
 
             var target = other.gameObject.GetComponent<NetworkDamageTestTarget>();
-            if(target == null)
-            {
-                return;
-            }
-
-            target.Heal(healthamount);
-            isUsed = true;
+            if(target == null) return;
             
 
-            Debug.Log("Health kit used up, " + healthamount + " health restored for " + target.name + ".");
+            //isUsed = true;
+            target.Heal(healthamount);
+            
+            
+
+            Debug.Log($"[Server] Kit {NetworkObjectId} picked up by client {target.OwnerClientId} " +
+                  $"on frame {Time.frameCount}, fixed time {Time.fixedTime:F3}", this);
             NetworkObject.Despawn(true);
         }  
     }

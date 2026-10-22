@@ -22,3 +22,12 @@ I did change the NetworkVariableReadPermission to owner and then I had to check 
 ## Important client/server authority and replication decision 
 
 Health is stored as a server NetworkVariable rather than being updated through RPCs. This means clients can read the value but never change it, and a player who joins midgame receives the current health immediately instead of needing past damage events replayed. Effects as explosions are sent as ClientRpcs instead, since they carry no state that a late joining player need.
+
+## The network conditions used for testing
+
+I tested how the healthkits are being picked up. When there where no delay (lag) the client/host sees the kit being picked up and despawned instanly but when I added 1000 ms to delay, no different for the host but for the client it takes a while for the kit to despawn.
+I used the network simulator to change the delay in game. 
+
+## Known limitations, trade-offs or remaining problems
+
+Projectiles are simulated only on the server, so a client sees its own shot but it lags a bit. I accepted this because it keeps hit detection right. With more time, I would spawn a local cosmetic projectile immediately on the firing client and reconcile it with the server’s result.

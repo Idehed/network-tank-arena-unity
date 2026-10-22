@@ -53,7 +53,6 @@ namespace NetworkTankArena.Tanks
             aimPositionAction.Enable();
             fireAction.Enable();
         }
-
         private void OnDisable()
         {
             fireLatch.RequireRelease();

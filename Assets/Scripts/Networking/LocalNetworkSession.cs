@@ -1,10 +1,13 @@
-using System.Collections.Generic;
 using NetworkTankArena.Presentation;
 using NetworkTankArena.Tanks;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace NetworkTankArena.Networking
 {
@@ -68,6 +71,7 @@ namespace NetworkTankArena.Networking
         public void StartHost() => StartSession(true);
         public void StartClient() => StartSession(false);
 
+
         private bool HealthKitSpawnsValid()
         {
             if (healthTargetSpawn == null || healthTargetSpawn.Length == 0)
@@ -116,14 +120,19 @@ namespace NetworkTankArena.Networking
             {
                 // Exactly one server-owned target per new Host session. Clients receive this spawn
                 // and its current NetworkVariables, including on a later connection.
-                foreach (Transform spawn in healthTargetSpawn)
-                {
-                    NetworkHealthKit kit = Instantiate(healthTargetPrefab, spawn.position,
-                        Quaternion.Euler(0f, spawn.eulerAngles.y, 0f));
-                    kit.NetworkObject.Spawn();
-                }
+                SpawnHealthKit();
             }
             status = started ? (host ? $"Hosting on localhost:{port}." : "Connecting to localhost...") : "Session could not start.";
+        }
+
+        public  void SpawnHealthKit()
+        {
+            foreach (Transform spawn in healthTargetSpawn)
+            {
+                NetworkHealthKit kit = Instantiate(healthTargetPrefab, spawn.position,
+                    Quaternion.Euler(0f, spawn.eulerAngles.y, 0f));
+                kit.NetworkObject.Spawn();
+            }
         }
 
 
